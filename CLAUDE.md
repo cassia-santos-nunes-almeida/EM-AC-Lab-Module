@@ -41,6 +41,7 @@ Goal: Code quality, UX polish, and student experience — dark mode, responsive 
 ## Skills
 
 When refactoring code → read `skills/refactor/SKILL.md` first.
+When building or improving frontend UI/UX → read `skills/frontend-design/SKILL.md` first.
 
 ## Context Files
 

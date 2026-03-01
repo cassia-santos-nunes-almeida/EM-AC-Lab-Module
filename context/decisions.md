@@ -4,6 +4,13 @@ Chronological log of key decisions. Newest at top.
 
 ---
 
+### 2026-03-01 — Frontend design skill (adapted)
+**Decision**: Install Anthropic's `frontend-design` plugin skill, adapted for educational context.
+**Reason**: The original skill pushes toward bold, "unforgettable" aesthetics that can compete with STEM learning content. Adapted version channels creative energy into micro-interactions, visual hierarchy, state transitions, and data visualization polish — areas that enhance student engagement without sacrificing clarity.
+**Alternatives considered**: Install as-is (rejected — "brutalist/maximalist" direction conflicts with educational readability), skip entirely (rejected — useful framework for intentional design decisions).
+
+---
+
 ### 2026-03-01 — SessionStart hook for npm install
 **Decision**: Add `.claude/hooks.json` with SessionStart hook running `npm install --silent`.
 **Reason**: Ensures dependencies are installed when opening a web session, avoiding missing-dependency errors.
