@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { ErrorBoundary } from './components/layout/ErrorBoundary';
 import { Layout } from './components/layout/Layout';
 import { Overview } from './components/modules/Overview';
@@ -23,6 +24,7 @@ function App() {
           </Routes>
         </Layout>
       </Router>
+      <Analytics />
     </ErrorBoundary>
   );
 }
