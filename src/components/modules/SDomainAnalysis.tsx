@@ -4,6 +4,7 @@ import { MathWrapper } from '../common/MathWrapper';
 import { Tabs } from '../common/Tabs';
 import { ResponseChartTooltip, RCritMarker, DurationControl, PoleTooltip } from '../common/CircuitCharts';
 import { calculateTransferFunction, calculateCircuitResponse } from '../../utils/circuitSolver';
+import { classifyDamping, dampingLabel } from '../../types/circuit';
 import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, ReferenceLine, LineChart, Line, Legend,
@@ -221,10 +222,7 @@ function InteractiveTab() {
   const omega0 = 1 / Math.sqrt(L * C);
   const zeta = alpha / omega0;
 
-  let dampingType = '';
-  if (zeta > 1.05) dampingType = 'Overdamped';
-  else if (zeta < 0.95) dampingType = 'Underdamped';
-  else dampingType = 'Critically Damped';
+  const dampingType = dampingLabel(classifyDamping(zeta));
 
   // R_crit = 2*sqrt(L/C)
   const rCrit = 2 * Math.sqrt(L / C);
