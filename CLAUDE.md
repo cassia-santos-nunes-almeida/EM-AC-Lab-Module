@@ -14,10 +14,10 @@ Interactive learning platform for electromagnetics and analog circuit analysis. 
 ## Architecture
 
 - `src/types/circuit.ts` — Shared type definitions (CircuitType, DampingType, classifyDamping). Single source of truth.
-- `src/store/progressStore.ts` — Zustand store for learning progress (persisted to localStorage)
-- `src/components/modules/` — Page-level components, lazy-loaded via React.lazy for code-splitting
-- `src/components/layout/` — Layout, Sidebar (with progress tracking), ErrorBoundary
-- `src/components/common/` — Shared components (AiTutor, CircuitCharts, MathWrapper, Tabs)
+- `src/store/progressStore.ts` — Zustand stores for progress tracking and theme (persisted to localStorage)
+- `src/components/modules/` — Page-level components, lazy-loaded via React.lazy for code-splitting. Large modules use subdirectory structure (e.g., `InteractiveLab/index.tsx` + `InteractiveLab/CircuitDiagram.tsx`).
+- `src/components/layout/` — Layout (responsive with mobile sidebar), Sidebar (with progress tracking + dark mode toggle), ErrorBoundary
+- `src/components/common/` — Shared components (AiTutor, CircuitCharts, CircuitParameterSliders, MathWrapper, Tabs)
 - `src/utils/` — Math/physics calculations (componentMath.ts, circuitSolver.ts), utility helpers (cn.ts)
 - `src/App.tsx` — Main app with React Router + Suspense code-splitting
 - `src/main.tsx` — Entry point
@@ -36,7 +36,7 @@ Interactive learning platform for electromagnetics and analog circuit analysis. 
 ## Current Sprint
 
 See `context/current-sprint.md` for detailed status.
-Goal: Project structure setup — align repo with Claude Code best practices.
+Goal: Code quality, UX polish, and student experience — dark mode, responsive layout, component architecture, testing, performance.
 
 ## Skills
 

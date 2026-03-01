@@ -1,8 +1,9 @@
-import { useState, useMemo } from 'react';
-import { BookOpen, SlidersHorizontal, Activity, RotateCcw } from 'lucide-react';
+import { useState, useMemo, useDeferredValue } from 'react';
+import { BookOpen, SlidersHorizontal, Activity } from 'lucide-react';
 import { MathWrapper } from '../common/MathWrapper';
 import { Tabs } from '../common/Tabs';
-import { ResponseChartTooltip, RCritMarker, DurationControl, PoleTooltip } from '../common/CircuitCharts';
+import { ResponseChartTooltip, PoleTooltip } from '../common/CircuitCharts';
+import { CircuitParameterSliders } from '../common/CircuitParameterSliders';
 import { calculateTransferFunction, calculateCircuitResponse } from '../../utils/circuitSolver';
 import { classifyDamping, dampingLabel } from '../../types/circuit';
 import {
@@ -217,22 +218,23 @@ function InteractiveTab() {
   const [autoDuration, setAutoDuration] = useState(true);
   const [duration, setDuration] = useState(0.01);
 
-  const { poles, numerator, denominator } = calculateTransferFunction(R, L, C);
-  const alpha = R / (2 * L);
-  const omega0 = 1 / Math.sqrt(L * C);
+  // Defer slider values so charts don't re-render on every pixel of drag
+  const dR = useDeferredValue(R);
+  const dL = useDeferredValue(L);
+  const dC = useDeferredValue(C);
+
+  const { poles, numerator, denominator } = calculateTransferFunction(dR, dL, dC);
+  const alpha = dR / (2 * dL);
+  const omega0 = 1 / Math.sqrt(dL * dC);
   const zeta = alpha / omega0;
 
   const dampingType = dampingLabel(classifyDamping(zeta));
 
-  // R_crit = 2*sqrt(L/C)
-  const rCrit = 2 * Math.sqrt(L / C);
-  const rCritPercent = Math.min(100, Math.max(0, (rCrit / 10000) * 100));
+  const rCrit = 2 * Math.sqrt(dL / dC);
 
-  // Time constant (envelope)
-  const timeConstant = (2 * L) / R;
+  const timeConstant = (2 * dL) / dR;
   const timeConstantMs = timeConstant * 1000;
 
-  // Auto-duration: 5*tau clamped to [1ms, 100ms]
   const effectiveDuration = useMemo(() => {
     if (autoDuration) {
       return Math.max(0.001, Math.min(0.1, 5 * timeConstant));
@@ -240,7 +242,6 @@ function InteractiveTab() {
     return duration;
   }, [autoDuration, timeConstant, duration]);
 
-  // Damped period for underdamped
   const dampedPeriodMs = useMemo(() => {
     if (zeta < 1) {
       const omegaD = omega0 * Math.sqrt(1 - zeta * zeta);
@@ -249,23 +250,21 @@ function InteractiveTab() {
     return null;
   }, [zeta, omega0]);
 
-  // Pole-zero data
   const poleData = poles.map((pole, idx) => ({
     x: pole.real,
     y: pole.imag,
     name: `Pole ${idx + 1}`,
   }));
 
-  // Time-domain step response
   const response = useMemo(() => {
     return calculateCircuitResponse(
       'RLC',
-      { R, L, C, voltage: 10 },
+      { R: dR, L: dL, C: dC, voltage: 10 },
       effectiveDuration / 1000,
       effectiveDuration,
       'step'
     );
-  }, [R, L, C, effectiveDuration]);
+  }, [dR, dL, dC, effectiveDuration]);
 
   const chartData = useMemo(() => {
     return response.data.map((point) => ({
@@ -287,63 +286,19 @@ function InteractiveTab() {
     <div className="space-y-6">
       {/* ROW 1: Sliders + Transfer Function / Pole Locations (2-col) */}
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Left: Sliders */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-semibold text-slate-900">Circuit Parameters</h2>
-            <button
-              onClick={handleReset}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Reset
-            </button>
-          </div>
-
-          <div className="space-y-5">
-            {/* R slider with R_crit marker */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Resistance (R): <span className="text-engineering-blue-700 font-semibold">{R >= 1000 ? `${(R/1000).toFixed(1)} k\u03A9` : `${R.toFixed(0)} \u03A9`}</span>
-              </label>
-              <div className="relative">
-                <input type="range" min="1" max="10000" step="1" value={R} onChange={(e) => setR(parseFloat(e.target.value))} className="w-full accent-red-500" />
-                <RCritMarker rCrit={rCrit} rCritPercent={rCritPercent} />
-              </div>
-              <div className="flex justify-between text-xs text-slate-400 mt-5">
-                <span>1 &#937;</span><span>10 k&#937;</span>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Inductance (L): <span className="text-engineering-blue-700 font-semibold">{(L * 1000).toFixed(1)} mH</span>
-              </label>
-              <input type="range" min="1" max="1000" step="1" value={L * 1000} onChange={(e) => setL(parseFloat(e.target.value) / 1000)} className="w-full accent-purple-500" />
-              <div className="flex justify-between text-xs text-slate-400 mt-0.5"><span>1 mH</span><span>1 H</span></div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Capacitance (C): <span className="text-engineering-blue-700 font-semibold">{(C * 1e6).toFixed(1)} &#181;F</span>
-              </label>
-              <input type="range" min="1" max="1000" step="1" value={C * 1e6} onChange={(e) => setC(parseFloat(e.target.value) / 1e6)} className="w-full accent-green-500" />
-              <div className="flex justify-between text-xs text-slate-400 mt-0.5"><span>1 &#181;F</span><span>1 mF</span></div>
-            </div>
-
-            <DurationControl
-              effectiveDuration={effectiveDuration}
-              autoDuration={autoDuration}
-              duration={duration}
-              onAutoDurationChange={setAutoDuration}
-              onDurationChange={setDuration}
-            />
-          </div>
-        </div>
+        <CircuitParameterSliders
+          R={R} L={L} C={C}
+          onR={setR} onL={setL} onC={setC}
+          circuitType="RLC"
+          title="Circuit Parameters"
+          duration={{ effectiveDuration, autoDuration, duration, onAutoDurationChange: setAutoDuration, onDurationChange: setDuration }}
+          onReset={handleReset}
+          rCrit={rCrit}
+        />
 
         {/* Right: Transfer function + characteristic equation */}
-        <div className="bg-white rounded-lg shadow-md p-6 flex flex-col">
-          <h2 className="text-lg font-semibold text-slate-900 mb-4">Transfer Function</h2>
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 flex flex-col">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Transfer Function</h2>
 
           <div className="space-y-4 flex-1">
             <div className="bg-engineering-blue-50 p-4 rounded-lg">

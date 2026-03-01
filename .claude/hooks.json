@@ -1,0 +1,10 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "type": "command",
+        "command": "npm install --silent 2>/dev/null && echo '✓ Dependencies installed' || echo '✗ npm install failed'"
+      }
+    ]
+  }
+}

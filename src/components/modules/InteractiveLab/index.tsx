@@ -1,9 +1,10 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useDeferredValue } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { RotateCcw } from 'lucide-react';
-import { calculateCircuitResponse, type CircuitType, type InputType, type CircuitResponse } from '../../utils/circuitSolver';
-import { MathWrapper } from '../common/MathWrapper';
-import { ResponseChartTooltip, RCritMarker, DurationControl } from '../common/CircuitCharts';
+import { calculateCircuitResponse, type CircuitType, type InputType, type CircuitResponse } from '../../../utils/circuitSolver';
+import { MathWrapper } from '../../common/MathWrapper';
+import { ResponseChartTooltip } from '../../common/CircuitCharts';
+import { CircuitParameterSliders } from '../../common/CircuitParameterSliders';
+import { CircuitDiagram } from './CircuitDiagram';
 
 /** Circuit equations panel showing formulas for the selected circuit/input type (F24). */
 function CircuitEquations({ circuitType, inputType, response }: {
@@ -276,104 +277,6 @@ function FirstOrderAnalysisPanel({ circuitType, response, R, L, C }: {
   );
 }
 
-function CircuitDiagram({ type, R, L, C, voltage }: { type: CircuitType; R: number; L: number; C: number; voltage: number }) {
-  return (
-    <svg viewBox="0 0 360 220" className="w-full h-auto" fill="none" xmlns="http://www.w3.org/2000/svg">
-      {/* Voltage source */}
-      <line x1="40" y1="40" x2="40" y2="70" stroke="#334155" strokeWidth="2" />
-      <circle cx="40" cy="90" r="20" stroke="#3b82f6" strokeWidth="2" fill="#eff6ff" />
-      <text x="40" y="87" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#3b82f6">+</text>
-      <text x="40" y="98" textAnchor="middle" fontSize="10" fontWeight="bold" fill="#3b82f6">-</text>
-      <text x="40" y="120" textAnchor="middle" fontSize="9" fill="#475569">{voltage}V</text>
-      <line x1="40" y1="110" x2="40" y2="190" stroke="#334155" strokeWidth="2" />
-
-      {/* Top wire */}
-      <line x1="40" y1="40" x2="100" y2="40" stroke="#334155" strokeWidth="2" />
-
-      {/* Resistor */}
-      <polyline
-        points="100,40 108,30 116,50 124,30 132,50 140,30 148,50 156,40 170,40"
-        stroke="#ef4444" strokeWidth="2" fill="none"
-      />
-      <text x="135" y="25" textAnchor="middle" fontSize="9" fill="#475569">R={R >= 1000 ? `${(R/1000).toFixed(1)}k` : R}&#937;</text>
-
-      {type === 'RC' && (
-        <>
-          {/* Wire to capacitor */}
-          <line x1="170" y1="40" x2="250" y2="40" stroke="#334155" strokeWidth="2" />
-          {/* Capacitor (vertical on the right) */}
-          <line x1="250" y1="40" x2="250" y2="75" stroke="#334155" strokeWidth="2" />
-          <line x1="235" y1="75" x2="265" y2="75" stroke="#22c55e" strokeWidth="3" />
-          <line x1="235" y1="85" x2="265" y2="85" stroke="#22c55e" strokeWidth="3" />
-          <line x1="250" y1="85" x2="250" y2="190" stroke="#334155" strokeWidth="2" />
-          <text x="280" y="83" textAnchor="start" fontSize="9" fill="#475569">C={C >= 0.001 ? `${(C*1000).toFixed(1)}mF` : `${(C*1e6).toFixed(1)}\u00B5F`}</text>
-          {/* Bottom wire */}
-          <line x1="40" y1="190" x2="250" y2="190" stroke="#334155" strokeWidth="2" />
-          {/* Ground */}
-          <line x1="135" y1="190" x2="135" y2="200" stroke="#334155" strokeWidth="2" />
-          <line x1="120" y1="200" x2="150" y2="200" stroke="#334155" strokeWidth="2" />
-          <line x1="125" y1="205" x2="145" y2="205" stroke="#334155" strokeWidth="1.5" />
-          <line x1="130" y1="210" x2="140" y2="210" stroke="#334155" strokeWidth="1" />
-        </>
-      )}
-
-      {type === 'RL' && (
-        <>
-          {/* Wire to inductor */}
-          <line x1="170" y1="40" x2="190" y2="40" stroke="#334155" strokeWidth="2" />
-          {/* Inductor (coils) */}
-          <path d="M190,40 Q200,20 210,40 Q220,20 230,40 Q240,20 250,40 Q260,20 270,40" stroke="#a855f7" strokeWidth="2" fill="none" />
-          <text x="230" y="25" textAnchor="middle" fontSize="9" fill="#475569">L={L >= 1 ? `${L.toFixed(1)}H` : `${(L*1000).toFixed(1)}mH`}</text>
-          {/* Wire down and back */}
-          <line x1="270" y1="40" x2="300" y2="40" stroke="#334155" strokeWidth="2" />
-          <line x1="300" y1="40" x2="300" y2="190" stroke="#334155" strokeWidth="2" />
-          {/* Bottom wire */}
-          <line x1="40" y1="190" x2="300" y2="190" stroke="#334155" strokeWidth="2" />
-          {/* Ground */}
-          <line x1="160" y1="190" x2="160" y2="200" stroke="#334155" strokeWidth="2" />
-          <line x1="145" y1="200" x2="175" y2="200" stroke="#334155" strokeWidth="2" />
-          <line x1="150" y1="205" x2="170" y2="205" stroke="#334155" strokeWidth="1.5" />
-          <line x1="155" y1="210" x2="165" y2="210" stroke="#334155" strokeWidth="1" />
-        </>
-      )}
-
-      {type === 'RLC' && (
-        <>
-          {/* Wire to inductor */}
-          <line x1="170" y1="40" x2="185" y2="40" stroke="#334155" strokeWidth="2" />
-          {/* Inductor */}
-          <path d="M185,40 Q193,22 201,40 Q209,22 217,40 Q225,22 233,40 Q241,22 249,40" stroke="#a855f7" strokeWidth="2" fill="none" />
-          <text x="217" y="25" textAnchor="middle" fontSize="9" fill="#475569">L={L >= 1 ? `${L.toFixed(1)}H` : `${(L*1000).toFixed(1)}mH`}</text>
-          {/* Wire to capacitor area */}
-          <line x1="249" y1="40" x2="310" y2="40" stroke="#334155" strokeWidth="2" />
-          {/* Capacitor (vertical on the right) */}
-          <line x1="310" y1="40" x2="310" y2="75" stroke="#334155" strokeWidth="2" />
-          <line x1="295" y1="75" x2="325" y2="75" stroke="#22c55e" strokeWidth="3" />
-          <line x1="295" y1="85" x2="325" y2="85" stroke="#22c55e" strokeWidth="3" />
-          <line x1="310" y1="85" x2="310" y2="190" stroke="#334155" strokeWidth="2" />
-          <text x="333" y="83" textAnchor="start" fontSize="9" fill="#475569">C={C >= 0.001 ? `${(C*1000).toFixed(1)}mF` : `${(C*1e6).toFixed(1)}\u00B5F`}</text>
-          {/* Bottom wire */}
-          <line x1="40" y1="190" x2="310" y2="190" stroke="#334155" strokeWidth="2" />
-          {/* Ground */}
-          <line x1="170" y1="190" x2="170" y2="200" stroke="#334155" strokeWidth="2" />
-          <line x1="155" y1="200" x2="185" y2="200" stroke="#334155" strokeWidth="2" />
-          <line x1="160" y1="205" x2="180" y2="205" stroke="#334155" strokeWidth="1.5" />
-          <line x1="165" y1="210" x2="175" y2="210" stroke="#334155" strokeWidth="1" />
-        </>
-      )}
-
-      {/* Current arrow */}
-      <defs>
-        <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="8" refY="3" orient="auto">
-          <polygon points="0 0, 8 3, 0 6" fill="#f59e0b" />
-        </marker>
-      </defs>
-      <line x1="60" y1="35" x2="85" y2="35" stroke="#f59e0b" strokeWidth="1.5" markerEnd="url(#arrowhead)" />
-      <text x="72" y="30" textAnchor="middle" fontSize="8" fontStyle="italic" fill="#f59e0b">i(t)</text>
-    </svg>
-  );
-}
-
 export function InteractiveLab() {
   const [circuitType, setCircuitType] = useState<CircuitType>('RLC');
   const [inputType, setInputType] = useState<InputType>('step');
@@ -386,25 +289,29 @@ export function InteractiveLab() {
   const [showCurrent, setShowCurrent] = useState(true);
   const [showVoltage, setShowVoltage] = useState(true);
 
+  // Defer slider values so chart doesn't re-render on every pixel of drag
+  const dR = useDeferredValue(R);
+  const dL = useDeferredValue(L);
+  const dC = useDeferredValue(C);
+  const dV = useDeferredValue(voltage);
+
   // Compute the time constant for the current circuit
   const timeConstant = useMemo(() => {
-    if (circuitType === 'RC') return R * C;
-    if (circuitType === 'RL') return L / R;
-    // RLC: envelope time constant = 1/alpha
-    return (2 * L) / R;
-  }, [circuitType, R, L, C]);
+    if (circuitType === 'RC') return dR * dC;
+    if (circuitType === 'RL') return dL / dR;
+    return (2 * dL) / dR;
+  }, [circuitType, dR, dL, dC]);
 
   // R_crit for RLC: R = 2*sqrt(L/C)
   const rCrit = useMemo(() => {
-    if (circuitType === 'RLC') return 2 * Math.sqrt(L / C);
+    if (circuitType === 'RLC') return 2 * Math.sqrt(dL / dC);
     return null;
-  }, [circuitType, L, C]);
+  }, [circuitType, dL, dC]);
 
   // Auto-duration: 5*tau, clamped to [1ms, 100ms]
   const effectiveDuration = useMemo(() => {
     if (autoDuration) {
-      const auto = Math.max(0.001, Math.min(0.1, 5 * timeConstant));
-      return auto;
+      return Math.max(0.001, Math.min(0.1, 5 * timeConstant));
     }
     return duration;
   }, [autoDuration, timeConstant, duration]);
@@ -412,12 +319,12 @@ export function InteractiveLab() {
   const response = useMemo(() => {
     return calculateCircuitResponse(
       circuitType,
-      { R, L, C, voltage },
+      { R: dR, L: dL, C: dC, voltage: dV },
       effectiveDuration / 1000,
       effectiveDuration,
       inputType
     );
-  }, [circuitType, R, L, C, voltage, effectiveDuration, inputType]);
+  }, [circuitType, dR, dL, dC, dV, effectiveDuration, inputType]);
 
   const chartData = useMemo(() => {
     return response.data.map((point) => ({
@@ -427,10 +334,8 @@ export function InteractiveLab() {
     }));
   }, [response.data]);
 
-  // Time constant in ms for the chart marker
   const timeConstantMs = timeConstant * 1000;
 
-  // Damped period for underdamped RLC
   const dampedPeriodMs = useMemo(() => {
     if (circuitType === 'RLC' && response.dampingType === 'underdamped' && response.omega0 && response.zeta) {
       const omegaD = response.omega0 * Math.sqrt(1 - response.zeta * response.zeta);
@@ -447,9 +352,6 @@ export function InteractiveLab() {
     setDuration(0.01);
     setAutoDuration(false);
   };
-
-  // R_crit slider position as percentage
-  const rCritPercent = rCrit !== null ? Math.min(100, Math.max(0, (rCrit / 10000) * 100)) : null;
 
   return (
     <div className="space-y-6">
@@ -498,78 +400,20 @@ export function InteractiveLab() {
 
       {/* ROW 1: Config + Circuit Diagram (2-col) */}
       <div className="grid lg:grid-cols-2 gap-6">
-        {/* Left: Sliders */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <div className="flex items-center justify-between mb-5">
-            <h2 className="text-lg font-semibold text-slate-900">Configuration</h2>
-            <button
-              onClick={handleReset}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Reset
-            </button>
-          </div>
-
-          <div className="space-y-5">
-            {/* R slider with R_crit marker */}
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Resistance (R): <span className="text-engineering-blue-700 font-semibold">{R >= 1000 ? `${(R/1000).toFixed(1)} k\u03A9` : `${R.toFixed(0)} \u03A9`}</span>
-              </label>
-              <div className="relative">
-                <input type="range" min="1" max="10000" step="1" value={R} onChange={(e) => setR(parseFloat(e.target.value))} className="w-full accent-red-500" />
-                {rCritPercent !== null && (
-                  <RCritMarker rCrit={rCrit!} rCritPercent={rCritPercent} />
-                )}
-              </div>
-              <div className={`flex justify-between text-xs text-slate-400 ${rCritPercent !== null ? 'mt-5' : 'mt-0.5'}`}>
-                <span>1 &#937;</span><span>10 k&#937;</span>
-              </div>
-            </div>
-
-            {(circuitType === 'RL' || circuitType === 'RLC') && (
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Inductance (L): <span className="text-engineering-blue-700 font-semibold">{(L * 1000).toFixed(1)} mH</span>
-                </label>
-                <input type="range" min="1" max="1000" step="1" value={L * 1000} onChange={(e) => setL(parseFloat(e.target.value) / 1000)} className="w-full accent-purple-500" />
-                <div className="flex justify-between text-xs text-slate-400 mt-0.5"><span>1 mH</span><span>1 H</span></div>
-              </div>
-            )}
-
-            {(circuitType === 'RC' || circuitType === 'RLC') && (
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                  Capacitance (C): <span className="text-engineering-blue-700 font-semibold">{(C * 1e6).toFixed(1)} &#181;F</span>
-                </label>
-                <input type="range" min="1" max="1000" step="1" value={C * 1e6} onChange={(e) => setC(parseFloat(e.target.value) / 1e6)} className="w-full accent-green-500" />
-                <div className="flex justify-between text-xs text-slate-400 mt-0.5"><span>1 &#181;F</span><span>1 mF</span></div>
-              </div>
-            )}
-
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Source Voltage: <span className="text-engineering-blue-700 font-semibold">{voltage.toFixed(1)} V</span>
-              </label>
-              <input type="range" min="1" max="50" step="0.5" value={voltage} onChange={(e) => setVoltage(parseFloat(e.target.value))} className="w-full accent-blue-500" />
-              <div className="flex justify-between text-xs text-slate-400 mt-0.5"><span>1 V</span><span>50 V</span></div>
-            </div>
-
-            <DurationControl
-              effectiveDuration={effectiveDuration}
-              autoDuration={autoDuration}
-              duration={duration}
-              onAutoDurationChange={setAutoDuration}
-              onDurationChange={setDuration}
-            />
-          </div>
-        </div>
+        <CircuitParameterSliders
+          R={R} L={L} C={C}
+          onR={setR} onL={setL} onC={setC}
+          circuitType={circuitType}
+          voltage={{ value: voltage, onChange: setVoltage }}
+          duration={{ effectiveDuration, autoDuration, duration, onAutoDurationChange: setAutoDuration, onDurationChange: setDuration }}
+          onReset={handleReset}
+          rCrit={rCrit}
+        />
 
         {/* Right: Circuit diagram */}
-        <div className="bg-white rounded-lg shadow-md p-6 flex flex-col">
-          <h2 className="text-lg font-semibold text-slate-900 mb-3">{circuitType} Circuit Diagram</h2>
-          <div className="flex-1 flex items-center justify-center bg-slate-50 rounded-lg p-4 border border-slate-100">
+        <div className="bg-white dark:bg-slate-800 rounded-lg shadow-md p-6 flex flex-col">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-3">{circuitType} Circuit Diagram</h2>
+          <div className="flex-1 flex items-center justify-center bg-slate-50 dark:bg-slate-700 rounded-lg p-4 border border-slate-100 dark:border-slate-600">
             <CircuitDiagram type={circuitType} R={R} L={L} C={C} voltage={voltage} />
           </div>
         </div>

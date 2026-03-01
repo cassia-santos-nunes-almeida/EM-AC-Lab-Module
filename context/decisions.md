@@ -4,6 +4,38 @@ Chronological log of key decisions. Newest at top.
 
 ---
 
+### 2026-03-01 — SessionStart hook for npm install
+**Decision**: Add `.claude/hooks.json` with SessionStart hook running `npm install --silent`.
+**Reason**: Ensures dependencies are installed when opening a web session, avoiding missing-dependency errors.
+
+### 2026-03-01 — Component subdirectory structure
+**Decision**: Move large page components (InteractiveLab, ComponentPhysics, TimeDomain) into subdirectories with `index.tsx` entry points.
+**Reason**: Enables extracting sub-components (e.g., `CircuitDiagram.tsx`) without polluting the flat `modules/` directory. Imports remain unchanged for consumers.
+
+### 2026-03-01 — Shared CircuitParameterSliders component
+**Decision**: Extract R/L/C slider UI into a shared `CircuitParameterSliders` component in `src/components/common/`.
+**Reason**: Identical slider markup was duplicated between InteractiveLab and SDomainAnalysis. Shared component eliminates ~100 lines of duplication.
+
+### 2026-03-01 — useDeferredValue for slider debounce
+**Decision**: Use React's `useDeferredValue` on slider state values before passing to chart computation.
+**Reason**: Charts were recalculating on every pixel of slider drag. `useDeferredValue` defers low-priority re-renders without adding external debounce libraries or timers. Built into React 19.
+
+### 2026-03-01 — Dark mode with Zustand theme store
+**Decision**: Class-based dark mode using `useThemeStore` (Zustand + persist). Toggle in sidebar applies/removes `.dark` class on `<html>`.
+**Reason**: Class-based approach works with Tailwind v4's `@variant dark`. Zustand persistence remembers preference across sessions.
+
+### 2026-03-01 — Tailwind v4 CSS-only configuration
+**Decision**: Delete `tailwind.config.js` and use Tailwind v4's `@theme` directive in `index.css` for custom colors and fonts.
+**Reason**: The v3-style config was redundant and potentially conflicting with v4's CSS-first approach. Single source of truth in CSS.
+
+### 2026-03-01 — Remove global heading/paragraph styles
+**Decision**: Remove `h1-h4` and `p` style rules from `index.css`.
+**Reason**: These global styles were overriding Tailwind utility classes, causing unexpected font sizes and margins.
+
+### 2026-03-01 — Responsive sidebar with mobile overlay
+**Decision**: Sidebar uses CSS transform + transition for mobile (hidden by default), always visible on md+ breakpoint. Mobile header with hamburger menu.
+**Reason**: Students may use the app on tablets/phones. No external UI library needed — pure Tailwind CSS transitions.
+
 ### 2026-03-01 — Add Zustand for progress tracking
 **Decision**: Use Zustand with `persist` middleware for student learning progress. Store in localStorage under `emac-progress`.
 **Reason**: Students need to see which modules they've visited. Zustand is minimal (1 KB), integrates cleanly, and the persist middleware handles localStorage automatically.

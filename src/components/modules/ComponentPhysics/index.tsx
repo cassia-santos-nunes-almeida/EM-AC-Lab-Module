@@ -1,5 +1,5 @@
 import { useState, type ReactNode } from 'react';
-import { MathWrapper } from '../common/MathWrapper';
+import { MathWrapper } from '../../common/MathWrapper';
 import {
   resistanceFormula,
   capacitanceFormula,
@@ -8,7 +8,7 @@ import {
   calculateCapacitance,
   calculateInductance,
   materials,
-} from '../../utils/componentMath';
+} from '../../../utils/componentMath';
 
 type ComponentType = 'resistor' | 'capacitor' | 'inductor';
 
