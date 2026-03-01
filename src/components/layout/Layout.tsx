@@ -51,7 +51,7 @@ export function Layout({ children }: LayoutProps) {
         </header>
 
         <main ref={mainRef} className="flex-1 overflow-auto relative">
-          <div className="max-w-7xl mx-auto p-4 md:p-8">
+          <div key={pathname} className="max-w-7xl mx-auto p-4 md:p-8 animate-fade-in">
             {children}
           </div>
         </main>

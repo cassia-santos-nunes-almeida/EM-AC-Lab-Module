@@ -32,7 +32,7 @@ export function Tabs({ tabs, defaultIndex = 0 }: TabsProps) {
           </button>
         ))}
       </div>
-      <div>{tabs[activeIndex].content}</div>
+      <div key={activeIndex} className="animate-fade-in">{tabs[activeIndex].content}</div>
     </div>
   );
 }
