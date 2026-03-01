@@ -40,6 +40,4 @@ Active bugs, limitations, and technical debt. Remove items when resolved.
 
 ## Cleanup
 
-13. **Unused starter assets** — `src/assets/react.svg` and `src/assets/vite.svg` are Vite boilerplate, not imported anywhere.
-
-14. **Hardcoded base path** — `vite.config.ts` has `base: '/module2testBolt/'` from old repo name.
+13. **Hardcoded base path** — `vite.config.ts` has `base: '/module2testBolt/'` from old repo name. README.md live demo link also references old repo.
