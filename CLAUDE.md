@@ -31,6 +31,26 @@ No test suite is configured yet.
 - vite-plugin-pwa for service worker generation and offline caching (auto-update strategy)
 - Optional Google Generative AI integration for AI tutor (API key in localStorage only)
 
+## Current Sprint
+
+See `context/current-sprint.md` for detailed status.
+Goal: Project structure setup — align repo with Claude Code best practices.
+
+## Skills
+
+When refactoring code → read `skills/refactor/SKILL.md` first.
+
+## Context Files
+
+- `context/current-sprint.md` — What's being built right now
+- `context/decisions.md` — Architecture decision log
+- `context/known-issues.md` — Active bugs and technical debt
+
+## Do Not Touch
+
+- `.github/workflows/deploy.yml` — CI/CD pipeline, change only with explicit intent
+- `src/utils/circuitSolver.ts` — Core math engine, requires careful review and testing before any modification
+
 ## Deployment
 
 Auto-deploys to GitHub Pages on push to `main` via `.github/workflows/deploy.yml`. The CI pipeline runs lint, type-check, and build before deploying. A `404.html` fallback is generated for SPA client-side routing. Uses `actions/deploy-pages` (requires Pages source set to "GitHub Actions" in repo settings).
