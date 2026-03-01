@@ -1,37 +1,15 @@
-export interface CircuitParams {
-  R: number;
-  L: number;
-  C: number;
-  voltage: number;
-}
+import {
+  type CircuitParams,
+  type TimeSeriesPoint,
+  type CircuitType,
+  type DampingType,
+  type CircuitResponse,
+  type InputType,
+  type Complex,
+  classifyDamping,
+} from '../types/circuit';
 
-export interface TimeSeriesPoint {
-  time: number;
-  voltage: number;
-  current: number;
-}
-
-export type CircuitType = 'RC' | 'RL' | 'RLC';
-export type DampingType = 'overdamped' | 'critically-damped' | 'underdamped';
-
-export interface CircuitResponse {
-  data: TimeSeriesPoint[];
-  dampingType?: DampingType;
-  alpha?: number;
-  omega0?: number;
-  zeta?: number;
-  timeConstant?: number;
-}
-
-export type InputType = 'step' | 'impulse';
-
-export interface Complex {
-  real: number;
-  imag: number;
-}
-
-/** Tolerance for treating zeta ~= 1 as critically damped */
-const CRITICAL_DAMPING_TOLERANCE = 0.01;
+export type { CircuitParams, TimeSeriesPoint, CircuitType, DampingType, CircuitResponse, InputType, Complex };
 
 /** Shared RLC characteristic parameters computed from R, L, C */
 interface RLCParams {
@@ -45,17 +23,7 @@ function computeRLCParams(R: number, L: number, C: number): RLCParams {
   const alpha = R / (2 * L);
   const omega0 = 1 / Math.sqrt(L * C);
   const zeta = alpha / omega0;
-
-  let dampingType: DampingType;
-  if (zeta > 1 + CRITICAL_DAMPING_TOLERANCE) {
-    dampingType = 'overdamped';
-  } else if (zeta < 1 - CRITICAL_DAMPING_TOLERANCE) {
-    dampingType = 'underdamped';
-  } else {
-    dampingType = 'critically-damped';
-  }
-
-  return { alpha, omega0, zeta, dampingType };
+  return { alpha, omega0, zeta, dampingType: classifyDamping(zeta) };
 }
 
 /** Generate evenly-spaced time samples using integer counter to avoid float drift (F9). */

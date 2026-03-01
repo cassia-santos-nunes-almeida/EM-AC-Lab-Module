@@ -1,27 +1,39 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import { ErrorBoundary } from './components/layout/ErrorBoundary';
 import { Layout } from './components/layout/Layout';
-import { Overview } from './components/modules/Overview';
-import { ComponentPhysics } from './components/modules/ComponentPhysics';
-import { TimeDomain } from './components/modules/TimeDomain';
-import { LaplaceTheory } from './components/modules/LaplaceTheory';
-import { SDomainAnalysis } from './components/modules/SDomainAnalysis';
-import { InteractiveLab } from './components/modules/InteractiveLab';
+
+const Overview = lazy(() => import('./components/modules/Overview').then(m => ({ default: m.Overview })));
+const ComponentPhysics = lazy(() => import('./components/modules/ComponentPhysics').then(m => ({ default: m.ComponentPhysics })));
+const TimeDomain = lazy(() => import('./components/modules/TimeDomain').then(m => ({ default: m.TimeDomain })));
+const LaplaceTheory = lazy(() => import('./components/modules/LaplaceTheory').then(m => ({ default: m.LaplaceTheory })));
+const SDomainAnalysis = lazy(() => import('./components/modules/SDomainAnalysis').then(m => ({ default: m.SDomainAnalysis })));
+const InteractiveLab = lazy(() => import('./components/modules/InteractiveLab').then(m => ({ default: m.InteractiveLab })));
+
+function PageLoader() {
+  return (
+    <div className="flex items-center justify-center h-64">
+      <div className="w-8 h-8 border-4 border-engineering-blue-200 border-t-engineering-blue-600 rounded-full animate-spin" />
+    </div>
+  );
+}
 
 function App() {
   return (
     <ErrorBoundary>
       <Router basename={import.meta.env.BASE_URL}>
         <Layout>
-          <Routes>
-            <Route path="/" element={<Overview />} />
-            <Route path="/component-physics" element={<ComponentPhysics />} />
-            <Route path="/circuit-analysis" element={<TimeDomain />} />
-            <Route path="/laplace-theory" element={<LaplaceTheory />} />
-            <Route path="/s-domain" element={<SDomainAnalysis />} />
-            <Route path="/interactive-lab" element={<InteractiveLab />} />
-          </Routes>
+          <Suspense fallback={<PageLoader />}>
+            <Routes>
+              <Route path="/" element={<Overview />} />
+              <Route path="/component-physics" element={<ComponentPhysics />} />
+              <Route path="/circuit-analysis" element={<TimeDomain />} />
+              <Route path="/laplace-theory" element={<LaplaceTheory />} />
+              <Route path="/s-domain" element={<SDomainAnalysis />} />
+              <Route path="/interactive-lab" element={<InteractiveLab />} />
+            </Routes>
+          </Suspense>
         </Layout>
       </Router>
       <Analytics />

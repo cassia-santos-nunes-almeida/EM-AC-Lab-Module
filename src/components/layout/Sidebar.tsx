@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import {
   Home,
@@ -6,8 +7,10 @@ import {
   FunctionSquare,
   GitBranch,
   FlaskConical,
+  Check,
 } from 'lucide-react';
 import { cn } from '../../utils/cn';
+import { useProgressStore } from '../../store/progressStore';
 
 const navigationLinks = [
   { to: '/', icon: Home, label: 'Overview', step: 0 },
@@ -20,9 +23,17 @@ const navigationLinks = [
 
 export function Sidebar() {
   const location = useLocation();
+  const { modules, markVisited } = useProgressStore();
   const currentIndex = navigationLinks.findIndex(link =>
     link.to === '/' ? location.pathname === '/' : location.pathname.startsWith(link.to)
   );
+
+  useEffect(() => {
+    markVisited(location.pathname);
+  }, [location.pathname, markVisited]);
+
+  const visitedCount = Object.values(modules).filter(m => m.visited).length;
+  const totalModules = navigationLinks.length;
 
   return (
     <aside className="w-64 bg-white border-r border-slate-200 flex flex-col">
@@ -31,41 +42,62 @@ export function Sidebar() {
         <p className="text-sm text-engineering-blue-200 mt-1">Module 2: Circuit Analysis</p>
       </div>
 
-      <nav className="flex-1 p-4">
+      <nav className="flex-1 p-4" aria-label="Learning path">
         <p className="text-[10px] font-semibold text-slate-400 uppercase tracking-widest mb-3 px-2">Learning Path</p>
         <ul className="space-y-1">
-          {navigationLinks.map((link, index) => (
-            <li key={link.to}>
-              <NavLink
-                to={link.to}
-                end={link.to === '/'}
-                className={({ isActive }) =>
-                  cn(
-                    'flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-sm',
-                    isActive
-                      ? 'bg-engineering-blue-50 text-engineering-blue-700 font-semibold border-l-3 border-engineering-blue-600'
-                      : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
-                  )
-                }
-              >
-                <div className={cn(
-                  'w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors',
-                  index === currentIndex
-                    ? 'bg-engineering-blue-600 text-white'
-                    : index < currentIndex
-                    ? 'bg-engineering-blue-100 text-engineering-blue-600'
-                    : 'bg-slate-100 text-slate-400'
-                )}>
-                  <link.icon className="w-3.5 h-3.5" />
-                </div>
-                <span>{link.label}</span>
-              </NavLink>
-            </li>
-          ))}
+          {navigationLinks.map((link, index) => {
+            const visited = modules[link.to]?.visited ?? false;
+            return (
+              <li key={link.to}>
+                <NavLink
+                  to={link.to}
+                  end={link.to === '/'}
+                  className={({ isActive }) =>
+                    cn(
+                      'flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all text-sm',
+                      isActive
+                        ? 'bg-engineering-blue-50 text-engineering-blue-700 font-semibold border-l-3 border-engineering-blue-600'
+                        : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                    )
+                  }
+                >
+                  <div className={cn(
+                    'w-7 h-7 rounded-full flex items-center justify-center shrink-0 transition-colors',
+                    index === currentIndex
+                      ? 'bg-engineering-blue-600 text-white'
+                      : visited
+                      ? 'bg-green-100 text-green-600'
+                      : index < currentIndex
+                      ? 'bg-engineering-blue-100 text-engineering-blue-600'
+                      : 'bg-slate-100 text-slate-400'
+                  )}>
+                    {visited && index !== currentIndex ? (
+                      <Check className="w-3.5 h-3.5" />
+                    ) : (
+                      <link.icon className="w-3.5 h-3.5" />
+                    )}
+                  </div>
+                  <span>{link.label}</span>
+                </NavLink>
+              </li>
+            );
+          })}
         </ul>
       </nav>
 
       <div className="p-4 border-t border-slate-100 bg-slate-50/50">
+        <div className="mb-2">
+          <div className="flex justify-between items-center mb-1">
+            <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wide">Progress</span>
+            <span className="text-[10px] font-medium text-slate-500">{visitedCount}/{totalModules}</span>
+          </div>
+          <div className="w-full h-1.5 bg-slate-200 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-green-500 rounded-full transition-all duration-500"
+              style={{ width: `${(visitedCount / totalModules) * 100}%` }}
+            />
+          </div>
+        </div>
         <p className="text-[10px] text-slate-400 text-center font-medium tracking-wide">
           CA/EM&CA Course
         </p>

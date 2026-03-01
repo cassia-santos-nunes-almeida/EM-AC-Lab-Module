@@ -247,6 +247,8 @@ export function AiTutor({ mode, onModeChange }: AiTutorProps) {
   // Header bar (shared between docked and floating)
   const header = (
     <div
+      role={isFloating ? 'toolbar' : undefined}
+      aria-label={isFloating ? 'Drag to reposition tutor window' : undefined}
       className={`bg-gradient-to-r from-engineering-blue-600 to-engineering-blue-700 text-white p-3 flex justify-between items-center ${isFloating ? 'cursor-grab active:cursor-grabbing rounded-t-xl' : ''}`}
       onMouseDown={isFloating ? handleMouseDown : undefined}
     >

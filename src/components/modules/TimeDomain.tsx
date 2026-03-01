@@ -3,7 +3,7 @@ import { MathWrapper } from '../common/MathWrapper';
 import { circuitAnalysisFormulas } from '../../utils/componentMath';
 import { ArrowRight } from 'lucide-react';
 
-type CircuitType = 'RC' | 'RL' | 'RLC';
+import type { CircuitType } from '../../types/circuit';
 
 /** Shared layout for the time-domain vs s-domain comparison sections (F16). */
 function CircuitComparisonLayout({ timeContent, sContent, conclusion }: {

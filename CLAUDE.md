@@ -6,18 +6,20 @@ Interactive learning platform for electromagnetics and analog circuit analysis. 
 
 - `npm run dev` / `npm start` — Start Vite dev server (localhost:5173)
 - `npm run build` — TypeScript check + production build (`tsc -b && vite build`)
-- `npm run lint` — ESLint
+- `npm run lint` — ESLint (includes jsx-a11y accessibility checks)
 - `npm run preview` — Preview production build locally
-
-No test suite is configured yet.
+- `npm test` — Run Vitest test suite
+- `npm run test:watch` — Run Vitest in watch mode
 
 ## Architecture
 
-- `src/components/modules/` — Page-level components for each learning module (Overview, ComponentPhysics, TimeDomain, LaplaceTheory, SDomainAnalysis, InteractiveLab). Each module contains co-located sub-components (e.g., `PoleZeroMap`, `StepResponsePanel`, `CircuitEquations`, `CircuitDiagram`).
-- `src/components/layout/` — Layout, Sidebar, ErrorBoundary
+- `src/types/circuit.ts` — Shared type definitions (CircuitType, DampingType, classifyDamping). Single source of truth.
+- `src/store/progressStore.ts` — Zustand store for learning progress (persisted to localStorage)
+- `src/components/modules/` — Page-level components, lazy-loaded via React.lazy for code-splitting
+- `src/components/layout/` — Layout, Sidebar (with progress tracking), ErrorBoundary
 - `src/components/common/` — Shared components (AiTutor, CircuitCharts, MathWrapper, Tabs)
 - `src/utils/` — Math/physics calculations (componentMath.ts, circuitSolver.ts), utility helpers (cn.ts)
-- `src/App.tsx` — Main app with React Router
+- `src/App.tsx` — Main app with React Router + Suspense code-splitting
 - `src/main.tsx` — Entry point
 
 ## Conventions
