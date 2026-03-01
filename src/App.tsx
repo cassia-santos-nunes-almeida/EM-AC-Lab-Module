@@ -14,7 +14,7 @@ const InteractiveLab = lazy(() => import('./components/modules/InteractiveLab').
 function PageLoader() {
   return (
     <div className="flex items-center justify-center h-64">
-      <div className="w-8 h-8 border-4 border-engineering-blue-200 border-t-engineering-blue-600 rounded-full animate-spin" />
+      <div className="w-8 h-8 border-4 border-engineering-blue-200 dark:border-engineering-blue-800 border-t-engineering-blue-600 dark:border-t-engineering-blue-400 rounded-full animate-spin" />
     </div>
   );
 }

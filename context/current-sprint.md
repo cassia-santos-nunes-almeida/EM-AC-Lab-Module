@@ -27,8 +27,12 @@ Code quality, UX polish, and student experience — dark mode, responsive layout
 - [x] componentMath test coverage (16 tests)
 - [x] SessionStart hook (.claude/hooks.json)
 
+- [x] AI Tutor dark mode styling
+- [x] Dark mode for Tabs, Overview, chart tooltips, DurationControl, page loader
+- [x] Mobile AI Tutor access (floating action button)
+- [x] Scroll-to-top on route navigation
+
 ## Next
 - Component-level tests (React Testing Library)
 - Further decomposition of large components (TimeDomain, ComponentPhysics)
 - PWA offline improvements
-- AI Tutor dark mode styling

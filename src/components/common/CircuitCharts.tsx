@@ -8,8 +8,8 @@ export function ResponseChartTooltip({ payload, label }: {
 }) {
   if (!payload || payload.length === 0) return null;
   return (
-    <div className="bg-white p-3 border border-slate-300 rounded shadow-lg">
-      <p className="font-semibold text-slate-800">
+    <div className="bg-white dark:bg-slate-800 p-3 border border-slate-300 dark:border-slate-600 rounded shadow-lg">
+      <p className="font-semibold text-slate-800 dark:text-slate-200">
         Time: {typeof label === 'string' ? parseFloat(label).toFixed(3) : Number(label).toFixed(3)} ms
       </p>
       {payload.map((entry, index) => (
@@ -32,7 +32,7 @@ export function RCritMarker({ rCrit, rCritPercent }: { rCrit: number; rCritPerce
       style={{ left: `${rCritPercent}%` }}
     >
       <div className="w-0 h-0 border-l-[4px] border-r-[4px] border-b-[6px] border-l-transparent border-r-transparent border-b-green-500 mx-auto" />
-      <span className="text-[10px] font-semibold text-green-700 whitespace-nowrap">
+      <span className="text-[10px] font-semibold text-green-700 dark:text-green-400 whitespace-nowrap">
         R<sub>crit</sub>={rCrit >= 1000 ? `${(rCrit / 1000).toFixed(1)}k` : rCrit.toFixed(0)}&Omega;
       </span>
     </div>
@@ -53,8 +53,8 @@ export function DurationControl({ effectiveDuration, autoDuration, duration, onA
   return (
     <div>
       <div className="flex items-center justify-between mb-1.5">
-        <label className="block text-sm font-medium text-slate-700">
-          Duration: <span className="text-engineering-blue-700 font-semibold">{(effectiveDuration * 1000).toFixed(1)} ms</span>
+        <label className="block text-sm font-medium text-slate-700 dark:text-slate-200">
+          Duration: <span className="text-engineering-blue-700 dark:text-engineering-blue-400 font-semibold">{(effectiveDuration * 1000).toFixed(1)} ms</span>
         </label>
         <label className="flex items-center gap-1.5 cursor-pointer">
           <input
@@ -63,7 +63,7 @@ export function DurationControl({ effectiveDuration, autoDuration, duration, onA
             onChange={(e) => onAutoDurationChange(e.target.checked)}
             className="w-3.5 h-3.5 accent-engineering-blue-600"
           />
-          <span className="text-xs font-medium text-slate-500">Auto (5&#964;)</span>
+          <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Auto (5&#964;)</span>
         </label>
       </div>
       <input
@@ -73,7 +73,7 @@ export function DurationControl({ effectiveDuration, autoDuration, duration, onA
         className={`w-full ${autoDuration ? 'opacity-40' : ''}`}
         disabled={autoDuration}
       />
-      <div className="flex justify-between text-xs text-slate-400 mt-0.5"><span>1 ms</span><span>100 ms</span></div>
+      <div className="flex justify-between text-xs text-slate-400 dark:text-slate-500 mt-0.5"><span>1 ms</span><span>100 ms</span></div>
     </div>
   );
 }
@@ -87,7 +87,7 @@ export function PoleTooltip({ payload }: {
   if (!payload || payload.length === 0) return null;
   const data = payload[0].payload;
   return (
-    <div className="bg-white p-2 border border-slate-300 rounded shadow-lg text-xs">
+    <div className="bg-white dark:bg-slate-800 p-2 border border-slate-300 dark:border-slate-600 rounded shadow-lg text-xs text-slate-800 dark:text-slate-200">
       <p className="font-semibold">{data.name}</p>
       <p>Real: {data.x.toFixed(3)}</p>
       <p>Imag: {data.y.toFixed(3)}</p>

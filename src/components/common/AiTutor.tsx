@@ -67,15 +67,15 @@ function ApiKeyPrompt({ apiKey, onApiKeyChange, onSubmit }: {
 }) {
   return (
     <div className="flex-1 p-6 flex flex-col justify-center items-center gap-4">
-      <Key className="w-12 h-12 text-engineering-blue-600" />
-      <h4 className="text-lg font-semibold text-slate-800">Enter Your API Key</h4>
-      <p className="text-sm text-slate-600 text-center">
+      <Key className="w-12 h-12 text-engineering-blue-600 dark:text-engineering-blue-400" />
+      <h4 className="text-lg font-semibold text-slate-800 dark:text-white">Enter Your API Key</h4>
+      <p className="text-sm text-slate-600 dark:text-slate-400 text-center">
         Get your free API key from{' '}
         <a
           href="https://aistudio.google.com/app/apikey"
           target="_blank"
           rel="noopener noreferrer"
-          className="text-engineering-blue-600 underline"
+          className="text-engineering-blue-600 dark:text-engineering-blue-400 underline"
         >
           Google AI Studio
         </a>
@@ -85,7 +85,7 @@ function ApiKeyPrompt({ apiKey, onApiKeyChange, onSubmit }: {
         value={apiKey}
         onChange={(e) => onApiKeyChange(e.target.value)}
         placeholder="Paste your Gemini API key"
-        className="w-full px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-engineering-blue-500"
+        className="w-full px-4 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-engineering-blue-500"
         onKeyDown={(e) => e.key === 'Enter' && onSubmit()}
       />
       <button
@@ -103,10 +103,10 @@ function ApiKeyPrompt({ apiKey, onApiKeyChange, onSubmit }: {
 function LoadingDots() {
   return (
     <div className="flex justify-start">
-      <div className="bg-slate-100 text-slate-800 p-3 rounded-lg">
+      <div className="bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200 p-3 rounded-lg">
         <div className="flex gap-1">
           {[0, 150, 300].map(delay => (
-            <div key={delay} className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: `${delay}ms` }} />
+            <div key={delay} className="w-2 h-2 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce" style={{ animationDelay: `${delay}ms` }} />
           ))}
         </div>
       </div>
@@ -313,7 +313,7 @@ export function AiTutor({ mode, onModeChange }: AiTutorProps) {
               className={`max-w-[85%] p-3 rounded-lg ${
                 message.role === 'user'
                   ? 'bg-engineering-blue-600 text-white'
-                  : 'bg-slate-100 text-slate-800'
+                  : 'bg-slate-100 dark:bg-slate-700 text-slate-800 dark:text-slate-200'
               }`}
             >
               {message.role === 'assistant' ? (
@@ -338,7 +338,7 @@ export function AiTutor({ mode, onModeChange }: AiTutorProps) {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-3 border-t border-slate-200">
+      <div className="p-3 border-t border-slate-200 dark:border-slate-700">
         <div className="flex gap-2">
           <input
             type="text"
@@ -346,7 +346,7 @@ export function AiTutor({ mode, onModeChange }: AiTutorProps) {
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleSendMessage()}
             placeholder="Ask about circuits..."
-            className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-engineering-blue-500 text-sm"
+            className="flex-1 px-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-700 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-engineering-blue-500 text-sm"
             disabled={isLoading}
           />
           <button
@@ -366,7 +366,7 @@ export function AiTutor({ mode, onModeChange }: AiTutorProps) {
   if (isFloating) {
     return (
       <div
-        className={`fixed z-[100] bg-white rounded-xl shadow-2xl border border-slate-200 flex flex-col overflow-hidden`}
+        className={`fixed z-[100] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden`}
         style={{
           width: FLOAT_WIDTH,
           height: FLOAT_HEIGHT,
@@ -382,7 +382,7 @@ export function AiTutor({ mode, onModeChange }: AiTutorProps) {
 
   // Docked mode
   return (
-    <aside className="w-96 h-screen bg-white border-l border-slate-200 flex flex-col shrink-0">
+    <aside className="w-96 h-screen bg-white dark:bg-slate-800 border-l border-slate-200 dark:border-slate-700 flex flex-col shrink-0">
       {header}
       {chatContent}
     </aside>
