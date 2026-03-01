@@ -38,6 +38,3 @@ Active bugs, limitations, and technical debt. Remove items when resolved.
 
 12. **API key in localStorage** — Gemini API key stored in plain text. Acceptable for student tool, not for broader deployment.
 
-## Cleanup
-
-13. **Hardcoded base path** — `vite.config.ts` has `base: '/module2testBolt/'` from old repo name. README.md live demo link also references old repo.
