@@ -2,7 +2,7 @@
 
 An interactive learning platform for electromagnetics and analog circuit analysis. Built for students taking introductory circuit theory courses at LUT University.
 
-**Live Demo:** https://cassia-santos-nunes-almeida.github.io/module2testBolt/
+**Live Demo:** https://cassia-santos-nunes-almeida.github.io/EM-AC-Lab-Module/
 
 ## Modules
 

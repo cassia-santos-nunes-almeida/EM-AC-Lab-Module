@@ -8,9 +8,10 @@ Project structure setup — aligning repo with Claude Code best practices (conte
 - [x] CLAUDE.md written
 - [x] CI/CD pipeline configured
 - [x] Refactor skill created
-- [x] PROJECT_CONTEXT.md generated
-- [ ] Context directory structure set up
-- [ ] Skills auto-triggering configured
+- [x] PROJECT_CONTEXT.md generated and restructured into context/ files
+- [x] Context directory structure set up
+- [x] Skills auto-triggering configured in CLAUDE.md
+- [x] Unused starter assets removed (react.svg, vite.svg)
 
 ## Next
 - Set up test framework (Vitest)
