@@ -8,6 +8,18 @@ const base = process.env.GITHUB_ACTIONS ? '/EM-AC-Lab-Module/' : '/'
 
 export default defineConfig({
   base,
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-recharts': ['recharts'],
+          'vendor-katex': ['katex'],
+          'vendor-gemini': ['@google/generative-ai'],
+        },
+      },
+    },
+  },
   test: {
     globals: true,
     environment: 'jsdom',

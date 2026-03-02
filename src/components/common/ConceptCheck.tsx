@@ -49,7 +49,7 @@ export function ConceptCheck({ data, className }: ConceptCheckProps) {
       </div>
 
       {data.mode === 'multiple-choice' && (
-        <div className="space-y-2 ml-7">
+        <div role="group" aria-label="Answer options" className="space-y-2 ml-7">
           {data.options.map((option, idx) => {
             const isSelected = selectedIndex === idx;
             const showFeedback = isSelected && selectedIndex !== null;
@@ -69,10 +69,13 @@ export function ConceptCheck({ data, className }: ConceptCheckProps) {
               >
                 {option.text}
                 {showFeedback && (
-                  <p className={cn(
-                    'text-xs mt-1',
-                    option.correct ? 'text-green-700 dark:text-green-400' : 'text-amber-700 dark:text-amber-400',
-                  )}>
+                  <p
+                    aria-live="polite"
+                    className={cn(
+                      'text-xs mt-1',
+                      option.correct ? 'text-green-700 dark:text-green-400' : 'text-amber-700 dark:text-amber-400',
+                    )}
+                  >
                     {option.explanation}
                   </p>
                 )}

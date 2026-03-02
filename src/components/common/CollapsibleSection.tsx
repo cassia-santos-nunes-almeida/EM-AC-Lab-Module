@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from 'react';
+import { useState, useId, type ReactNode } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { cn } from '../../utils/cn';
 
@@ -22,6 +22,7 @@ export function CollapsibleSection({
   id,
 }: CollapsibleSectionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
+  const contentId = useId();
 
   return (
     <div
@@ -41,6 +42,7 @@ export function CollapsibleSection({
           variant === 'card' && 'rounded-lg',
         )}
         aria-expanded={isOpen}
+        aria-controls={contentId}
       >
         <span className="flex items-center gap-2">
           {icon}
@@ -51,10 +53,14 @@ export function CollapsibleSection({
           isOpen && 'rotate-180',
         )} />
       </button>
-      <div className={cn(
-        'overflow-hidden transition-[max-height] duration-200 ease-in-out',
-        isOpen ? 'max-h-[5000px]' : 'max-h-0',
-      )}>
+      <div
+        id={contentId}
+        role="region"
+        className={cn(
+          'overflow-hidden transition-[max-height] duration-200 ease-in-out',
+          isOpen ? 'max-h-[5000px]' : 'max-h-0',
+        )}
+      >
         <div className={cn(variant === 'card' && 'px-5 pb-5')}>
           {children}
         </div>

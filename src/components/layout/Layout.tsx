@@ -1,21 +1,9 @@
-import { useState, useEffect, useRef, useSyncExternalStore, type ReactNode } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MessageSquare, Menu, WifiOff } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { AiTutor, type TutorMode } from '../common/AiTutor';
-
-function subscribeOnline(cb: () => void) {
-  window.addEventListener('online', cb);
-  window.addEventListener('offline', cb);
-  return () => {
-    window.removeEventListener('online', cb);
-    window.removeEventListener('offline', cb);
-  };
-}
-
-function useOnlineStatus() {
-  return useSyncExternalStore(subscribeOnline, () => navigator.onLine, () => true);
-}
+import { useOnlineStatus } from '../../hooks/useOnlineStatus';
 
 interface LayoutProps {
   children: ReactNode;
@@ -34,6 +22,12 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="flex h-screen bg-slate-50 dark:bg-slate-900">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:z-[200] focus:top-2 focus:left-2 focus:px-4 focus:py-2 focus:bg-engineering-blue-600 focus:text-white focus:rounded-lg focus:text-sm focus:font-medium"
+      >
+        Skip to content
+      </a>
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div
@@ -70,7 +64,7 @@ export function Layout({ children }: LayoutProps) {
             You are offline — some features may be unavailable.
           </div>
         )}
-        <main ref={mainRef} className="flex-1 overflow-auto relative">
+        <main id="main-content" ref={mainRef} className="flex-1 overflow-auto relative">
           <div key={pathname} className="max-w-7xl mx-auto p-4 md:p-8 animate-fade-in">
             {children}
           </div>
