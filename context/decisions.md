@@ -4,6 +4,14 @@ Chronological log of key decisions. Newest at top.
 
 ---
 
+### 2026-03-02 — Module navigation component
+**Decision**: Create a shared `ModuleNavigation` component with Previous/Next links, embedded at the bottom of every module page.
+**Reason**: Students had to use the sidebar for all navigation, breaking flow. Sequential links at the bottom of content guide linear learners through the intended path.
+
+### 2026-03-02 — CircuitDiagram dark mode via CSS custom properties
+**Decision**: Use CSS custom properties (`--circuit-wire`, `--circuit-text`) with Tailwind's `dark:` class on the SVG root, instead of hardcoded hex colors.
+**Reason**: SVG stroke/fill attributes don't support Tailwind's `dark:` prefix directly. CSS custom properties are the lightest-weight approach — no JS theme detection needed, no `useThemeStore` import, and the variables are scoped to the SVG element.
+
 ### 2026-03-02 — Progressive disclosure with CollapsibleSection
 **Decision**: Create a shared `CollapsibleSection` component and use it throughout modules for secondary content (material properties, experiment tips, method comparisons).
 **Reason**: Long pages overwhelm students. Collapsible sections let students focus on primary content first and expand details on demand. Reduces initial cognitive load while keeping all content accessible.

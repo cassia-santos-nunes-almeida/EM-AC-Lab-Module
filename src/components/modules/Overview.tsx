@@ -1,6 +1,7 @@
 import { Target, Compass, AlertTriangle, Scale, Zap, Clock, FunctionSquare, GitBranch, FlaskConical, ArrowRight, Lightbulb } from 'lucide-react';
 import { MathWrapper } from '../common/MathWrapper';
 import { Tabs } from '../common/Tabs';
+import { ModuleNavigation } from '../common/ModuleNavigation';
 import { Link } from 'react-router-dom';
 
 const learningPath = [
@@ -262,6 +263,8 @@ export function Overview() {
           },
         ]}
       />
+
+      <ModuleNavigation />
     </div>
   );
 }

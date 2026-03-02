@@ -1,40 +1,22 @@
-import { useState, type ReactNode } from 'react';
+import { useState } from 'react';
 import { MathWrapper } from '../../common/MathWrapper';
 import { CollapsibleSection } from '../../common/CollapsibleSection';
 import { ConceptCheck } from '../../common/ConceptCheck';
+import { ModuleNavigation } from '../../common/ModuleNavigation';
+import { TableOfContents } from '../../common/TableOfContents';
 import { circuitAnalysisFormulas } from '../../../utils/componentMath';
-import { ArrowRight } from 'lucide-react';
+import { CircuitComparisonLayout } from './CircuitComparisonLayout';
+import { MethodComparisonTable } from './MethodComparisonTable';
+import { ResponseComparisons } from './ResponseComparisons';
 
 import type { CircuitType } from '../../../types/circuit';
 
-/** Shared layout for the time-domain vs s-domain comparison sections (F16). */
-function CircuitComparisonLayout({ timeContent, sContent, conclusion }: {
-  timeContent: ReactNode;
-  sContent: ReactNode;
-  conclusion: ReactNode;
-}) {
-  return (
-    <div className="grid md:grid-cols-2 gap-6">
-      <div className="bg-gradient-to-br from-blue-50 to-white dark:from-blue-900/20 dark:to-slate-800 rounded-lg shadow-md p-6 border-l-4 border-blue-500">
-        <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">Time-Domain Approach</h3>
-        <div className="space-y-4">{timeContent}</div>
-      </div>
-
-      <div className="bg-gradient-to-br from-purple-50 to-white dark:from-purple-900/20 dark:to-slate-800 rounded-lg shadow-md p-6 border-l-4 border-purple-500">
-        <h3 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">S-Domain Approach</h3>
-        <div className="space-y-4">{sContent}</div>
-      </div>
-
-      <div className="col-span-full bg-green-50 dark:bg-green-900/20 rounded-lg shadow-md p-6 border-l-4 border-green-500">
-        <div className="flex items-center gap-3 mb-3">
-          <ArrowRight className="w-6 h-6 text-green-600 dark:text-green-400" />
-          <h3 className="text-xl font-semibold text-slate-900 dark:text-white">Conclusion</h3>
-        </div>
-        {conclusion}
-      </div>
-    </div>
-  );
-}
+const tocEntries = [
+  { id: 'circuit-analysis', label: 'Circuit Analysis' },
+  { id: 'concept-check', label: 'Check Understanding' },
+  { id: 'method-comparison', label: 'Method Comparison' },
+  { id: 'response-types', label: 'Response Types' },
+];
 
 export function TimeDomain() {
   const [selectedCircuit, setSelectedCircuit] = useState<CircuitType>('RC');
@@ -48,7 +30,9 @@ export function TimeDomain() {
         </p>
       </div>
 
-      <div className="flex border-b-2 border-slate-200 dark:border-slate-700">
+      <TableOfContents entries={tocEntries} />
+
+      <div id="circuit-analysis" className="scroll-mt-4 flex border-b-2 border-slate-200 dark:border-slate-700">
         {(['RC', 'RL', 'RLC'] as const).map((type) => (
           <button
             key={type}
@@ -68,6 +52,7 @@ export function TimeDomain() {
       {selectedCircuit === 'RL' && <RLCircuitComparison />}
       {selectedCircuit === 'RLC' && <RLCCircuitComparison />}
 
+      <div id="concept-check" className="scroll-mt-4" />
       {selectedCircuit === 'RC' && (
         <ConceptCheck data={{
           mode: 'predict-reveal',
@@ -90,12 +75,14 @@ export function TimeDomain() {
         }} />
       )}
 
-      <CollapsibleSection title="Method Comparison" defaultOpen={true}>
+      <CollapsibleSection title="Method Comparison" defaultOpen={true} className="scroll-mt-4" id="method-comparison">
         <MethodComparisonTable />
       </CollapsibleSection>
-      <CollapsibleSection title="Circuit Response Types" defaultOpen={false}>
+      <CollapsibleSection title="Circuit Response Types" defaultOpen={false} className="scroll-mt-4" id="response-types">
         <ResponseComparisons />
       </CollapsibleSection>
+
+      <ModuleNavigation />
     </div>
   );
 }
@@ -311,206 +298,6 @@ function RLCircuitComparison() {
         </p>
       }
     />
-  );
-}
-
-function MethodComparisonTable() {
-  return (
-    <div>
-      <p className="text-sm text-slate-600 dark:text-slate-400 mb-5">
-        Time-domain vs s-domain: when to use each approach
-      </p>
-
-      <div className="overflow-x-auto">
-        <table className="w-full border-collapse text-sm">
-          <thead>
-            <tr>
-              <th className="border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 px-4 py-3 text-left font-semibold text-slate-800 dark:text-slate-200 w-1/4">Aspect</th>
-              <th className="border border-slate-300 dark:border-slate-600 bg-blue-50 dark:bg-blue-900/30 px-4 py-3 text-left font-semibold text-blue-800 dark:text-blue-300 w-[37.5%]">Time-Domain</th>
-              <th className="border border-slate-300 dark:border-slate-600 bg-purple-50 dark:bg-purple-900/30 px-4 py-3 text-left font-semibold text-purple-800 dark:text-purple-300 w-[37.5%]">S-Domain (Laplace)</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Mathematical tool</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Differential equations (ODE/PDE)</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Algebraic equations in <MathWrapper formula="s" /></td>
-            </tr>
-            <tr className="bg-slate-50/50 dark:bg-slate-700/30">
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Initial conditions</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Applied after finding the general solution (constants of integration)</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Built into the transform automatically from the start</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Complexity scaling</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Grows rapidly with circuit order; 2nd-order and above require characteristic equation, multiple cases</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Remains algebraic regardless of order; higher-order just means more terms in the polynomial</td>
-            </tr>
-            <tr className="bg-slate-50/50 dark:bg-slate-700/30">
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Physical intuition</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Direct view of how voltages/currents evolve over time</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Insight via poles/zeros, transfer functions, and frequency response</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Input handling</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Each input type (step, impulse, sinusoid) may need a different solution technique</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Multiply transfer function by input's Laplace transform — same procedure every time</td>
-            </tr>
-            <tr className="bg-slate-50/50 dark:bg-slate-700/30">
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Stability analysis</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Must examine solution behavior as <MathWrapper formula="t \to \infty" /></td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Check if all poles have negative real parts (left half-plane)</td>
-            </tr>
-            <tr>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 font-medium text-slate-700 dark:text-slate-300">Best suited for</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Simple 1st-order circuits, building foundational understanding</td>
-              <td className="border border-slate-300 dark:border-slate-600 px-4 py-3 text-slate-700 dark:text-slate-300">Higher-order circuits, control systems, frequency-domain design</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
-}
-
-function ResponseComparisons() {
-  return (
-    <div>
-      <p className="text-sm text-slate-600 dark:text-slate-400 mb-6">
-        How circuits respond to different standard inputs — natural, step, and impulse
-      </p>
-
-      <div className="grid md:grid-cols-3 gap-6">
-        {/* Natural Response */}
-        <div className="bg-amber-50 dark:bg-amber-900/20 rounded-lg p-5 border border-amber-200 dark:border-amber-800">
-          <h3 className="text-lg font-semibold text-amber-900 dark:text-amber-300 mb-1">Natural Response</h3>
-          <p className="text-xs text-amber-700 dark:text-amber-400 mb-4">No external input — circuit discharges stored energy</p>
-
-          <div className="space-y-4">
-            <div className="bg-white dark:bg-slate-700/50 rounded p-3">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">RC Circuit</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Capacitor initially charged to <MathWrapper formula="V_0" />:</p>
-              <MathWrapper formula="v_C(t) = V_0 \, e^{-t/RC}" block />
-            </div>
-
-            <div className="bg-white dark:bg-slate-700/50 rounded p-3">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">RL Circuit</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Inductor initially carrying <MathWrapper formula="I_0" />:</p>
-              <MathWrapper formula="i(t) = I_0 \, e^{-Rt/L}" block />
-            </div>
-
-            <div className="bg-white dark:bg-slate-700/50 rounded p-3">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">RLC Circuit</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Depends on damping ratio <MathWrapper formula="\zeta" />:</p>
-              <MathWrapper formula="v(t) = e^{-\alpha t}(A_1 e^{s_1 t} + A_2 e^{s_2 t})" block />
-            </div>
-
-            <div className="bg-amber-100/60 dark:bg-amber-900/30 rounded p-3">
-              <p className="text-xs font-semibold text-amber-800 dark:text-amber-300 mb-1">S-Domain View</p>
-              <p className="text-xs text-amber-700 dark:text-amber-400">
-                The natural response comes from the <strong>poles of the transfer function</strong> alone.
-                No input transform is involved — only initial condition terms appear.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Step Response */}
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-5 border border-blue-200 dark:border-blue-800">
-          <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-300 mb-1">Step Response</h3>
-          <p className="text-xs text-blue-700 dark:text-blue-400 mb-4">
-            Response to a suddenly applied constant input: <MathWrapper formula="u(t)" />
-          </p>
-
-          <div className="space-y-4">
-            <div className="bg-white dark:bg-slate-700/50 rounded p-3">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">RC Circuit</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Capacitor voltage rises toward <MathWrapper formula="V_s" />:</p>
-              <MathWrapper formula="v_C(t) = V_s(1 - e^{-t/RC})" block />
-            </div>
-
-            <div className="bg-white dark:bg-slate-700/50 rounded p-3">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">RL Circuit</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current rises toward <MathWrapper formula="V_s/R" />:</p>
-              <MathWrapper formula="i(t) = \frac{V_s}{R}(1 - e^{-Rt/L})" block />
-            </div>
-
-            <div className="bg-white dark:bg-slate-700/50 rounded p-3">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">RLC Circuit (underdamped)</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Oscillates before settling:</p>
-              <MathWrapper formula="v_C(t) = V_s\!\left(1 - \frac{e^{-\alpha t}}{\sqrt{1-\zeta^2}}\sin(\omega_d t + \phi)\right)" block />
-            </div>
-
-            <div className="bg-blue-100/60 dark:bg-blue-900/30 rounded p-3">
-              <p className="text-xs font-semibold text-blue-800 dark:text-blue-300 mb-1">S-Domain View</p>
-              <p className="text-xs text-blue-700 dark:text-blue-400">
-                Multiply transfer function <MathWrapper formula="H(s)" /> by the step input <MathWrapper formula="1/s" />,
-                then inverse transform. The <MathWrapper formula="1/s" /> factor adds a pole at the origin,
-                producing the DC steady-state component.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Impulse Response */}
-        <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-5 border border-purple-200 dark:border-purple-800">
-          <h3 className="text-lg font-semibold text-purple-900 dark:text-purple-300 mb-1">Impulse Response</h3>
-          <p className="text-xs text-purple-700 dark:text-purple-400 mb-4">
-            Response to a Dirac delta input: <MathWrapper formula="\delta(t)" />
-          </p>
-
-          <div className="space-y-4">
-            <div className="bg-white dark:bg-slate-700/50 rounded p-3">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">RC Circuit</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Instantaneous charge, then exponential decay:</p>
-              <MathWrapper formula="v_C(t) = \frac{1}{RC}\,e^{-t/RC}" block />
-            </div>
-
-            <div className="bg-white dark:bg-slate-700/50 rounded p-3">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">RL Circuit</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Current jumps, then decays:</p>
-              <MathWrapper formula="i(t) = \frac{1}{L}\,e^{-Rt/L}" block />
-            </div>
-
-            <div className="bg-white dark:bg-slate-700/50 rounded p-3">
-              <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 mb-2">RLC Circuit (underdamped)</p>
-              <p className="text-xs text-slate-600 dark:text-slate-400 mb-1">Damped oscillation from the start:</p>
-              <MathWrapper formula="h(t) = \frac{\omega_0}{\sqrt{1-\zeta^2}}\,e^{-\alpha t}\sin(\omega_d t)" block />
-            </div>
-
-            <div className="bg-purple-100/60 dark:bg-purple-900/30 rounded p-3">
-              <p className="text-xs font-semibold text-purple-800 dark:text-purple-300 mb-1">S-Domain View</p>
-              <p className="text-xs text-purple-700 dark:text-purple-400">
-                Since <MathWrapper formula="\mathcal{L}\{\delta(t)\} = 1" />, the impulse response is
-                simply <MathWrapper formula="h(t) = \mathcal{L}^{-1}\{H(s)\}" />. This is the most
-                fundamental response — it fully characterizes the system.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-6 bg-slate-50 dark:bg-slate-700/50 rounded-lg p-5 border border-slate-200 dark:border-slate-600">
-        <h3 className="text-base font-semibold text-slate-900 dark:text-white mb-3">Key Relationships</h3>
-        <div className="grid md:grid-cols-3 gap-4 text-sm text-slate-700 dark:text-slate-300">
-          <div className="bg-white dark:bg-slate-800 rounded p-3 border border-slate-100 dark:border-slate-600">
-            <p className="font-medium text-slate-800 dark:text-slate-200 mb-1">Impulse → Step</p>
-            <p className="text-xs mb-2">The step response is the integral of the impulse response:</p>
-            <MathWrapper formula="y_{\text{step}}(t) = \int_0^t h(\tau)\,d\tau" block />
-          </div>
-          <div className="bg-white dark:bg-slate-800 rounded p-3 border border-slate-100 dark:border-slate-600">
-            <p className="font-medium text-slate-800 dark:text-slate-200 mb-1">Step → Impulse</p>
-            <p className="text-xs mb-2">The impulse response is the derivative of the step response:</p>
-            <MathWrapper formula="h(t) = \frac{d}{dt}\,y_{\text{step}}(t)" block />
-          </div>
-          <div className="bg-white dark:bg-slate-800 rounded p-3 border border-slate-100 dark:border-slate-600">
-            <p className="font-medium text-slate-800 dark:text-slate-200 mb-1">Convolution</p>
-            <p className="text-xs mb-2">Any response can be found via convolution with the impulse response:</p>
-            <MathWrapper formula="y(t) = h(t) * x(t) = \int_0^t h(\tau)\,x(t-\tau)\,d\tau" block />
-          </div>
-        </div>
-      </div>
-    </div>
   );
 }
 

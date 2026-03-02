@@ -1,8 +1,21 @@
-import { useState, useEffect, useRef, type ReactNode } from 'react';
+import { useState, useEffect, useRef, useSyncExternalStore, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
-import { MessageSquare, Menu } from 'lucide-react';
+import { MessageSquare, Menu, WifiOff } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { AiTutor, type TutorMode } from '../common/AiTutor';
+
+function subscribeOnline(cb: () => void) {
+  window.addEventListener('online', cb);
+  window.addEventListener('offline', cb);
+  return () => {
+    window.removeEventListener('online', cb);
+    window.removeEventListener('offline', cb);
+  };
+}
+
+function useOnlineStatus() {
+  return useSyncExternalStore(subscribeOnline, () => navigator.onLine, () => true);
+}
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,6 +26,7 @@ export function Layout({ children }: LayoutProps) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const mainRef = useRef<HTMLElement>(null);
   const { pathname } = useLocation();
+  const isOnline = useOnlineStatus();
 
   useEffect(() => {
     mainRef.current?.scrollTo(0, 0);
@@ -50,6 +64,12 @@ export function Layout({ children }: LayoutProps) {
           <span className="font-semibold text-slate-900 dark:text-white text-sm">EM&AC Lab</span>
         </header>
 
+        {!isOnline && (
+          <div className="flex items-center justify-center gap-2 px-4 py-2 bg-amber-100 dark:bg-amber-900/40 border-b border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-sm font-medium shrink-0">
+            <WifiOff className="w-4 h-4 shrink-0" />
+            You are offline — some features may be unavailable.
+          </div>
+        )}
         <main ref={mainRef} className="flex-1 overflow-auto relative">
           <div key={pathname} className="max-w-7xl mx-auto p-4 md:p-8 animate-fade-in">
             {children}

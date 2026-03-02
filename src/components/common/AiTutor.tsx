@@ -1,7 +1,24 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
-import { MessageSquare, Send, Key, PanelLeftClose, X, Maximize2 } from 'lucide-react';
+import { useState, useRef, useEffect, useCallback, useSyncExternalStore } from 'react';
+import { MessageSquare, Send, Key, PanelLeftClose, X, Maximize2, WifiOff } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { MathWrapper } from './MathWrapper';
+
+function subscribeOnline(cb: () => void) {
+  window.addEventListener('online', cb);
+  window.addEventListener('offline', cb);
+  return () => {
+    window.removeEventListener('online', cb);
+    window.removeEventListener('offline', cb);
+  };
+}
+
+function getOnlineSnapshot() {
+  return navigator.onLine;
+}
+
+function useOnlineStatus() {
+  return useSyncExternalStore(subscribeOnline, getOnlineSnapshot, () => true);
+}
 
 interface Message {
   role: 'user' | 'assistant';
@@ -164,6 +181,7 @@ export function AiTutor({ mode, onModeChange }: AiTutorProps) {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const chatRef = useRef<ReturnType<ReturnType<GoogleGenerativeAI['getGenerativeModel']>['startChat']> | null>(null);
+  const isOnline = useOnlineStatus();
 
   const { floatPos, onMouseDown: handleMouseDown } = useDraggable(mode);
 
@@ -212,6 +230,16 @@ export function AiTutor({ mode, onModeChange }: AiTutorProps) {
 
   const handleSendMessage = async () => {
     if (!input.trim() || isLoading) return;
+
+    if (!navigator.onLine) {
+      setMessages(prev => [
+        ...prev,
+        { role: 'user', content: input },
+        { role: 'assistant', content: 'You appear to be offline. Please check your internet connection and try again.' },
+      ]);
+      setInput('');
+      return;
+    }
 
     const userMessage = input;
     setInput('');
@@ -303,6 +331,12 @@ export function AiTutor({ mode, onModeChange }: AiTutorProps) {
     <ApiKeyPrompt apiKey={apiKey} onApiKeyChange={setApiKey} onSubmit={handleSetApiKey} />
   ) : (
     <>
+      {!isOnline && (
+        <div className="flex items-center gap-2 px-3 py-2 bg-amber-50 dark:bg-amber-900/30 border-b border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 text-xs font-medium">
+          <WifiOff className="w-3.5 h-3.5 shrink-0" />
+          You are offline — AI Tutor requires an internet connection.
+        </div>
+      )}
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
           <div

@@ -9,6 +9,7 @@ interface CollapsibleSectionProps {
   icon?: ReactNode;
   variant?: 'card' | 'inline';
   className?: string;
+  id?: string;
 }
 
 export function CollapsibleSection({
@@ -18,14 +19,18 @@ export function CollapsibleSection({
   icon,
   variant = 'card',
   className,
+  id,
 }: CollapsibleSectionProps) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className={cn(
-      variant === 'card' && 'bg-white dark:bg-slate-800 rounded-lg shadow-md',
-      className,
-    )}>
+    <div
+      id={id}
+      className={cn(
+        variant === 'card' && 'bg-white dark:bg-slate-800 rounded-lg shadow-md',
+        className,
+      )}
+    >
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={cn(
