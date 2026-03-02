@@ -1,21 +1,9 @@
-import { useState, useEffect, useRef, useSyncExternalStore, type ReactNode } from 'react';
+import { useState, useEffect, useRef, type ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
 import { MessageSquare, Menu, WifiOff } from 'lucide-react';
 import { Sidebar } from './Sidebar';
 import { AiTutor, type TutorMode } from '../common/AiTutor';
-
-function subscribeOnline(cb: () => void) {
-  window.addEventListener('online', cb);
-  window.addEventListener('offline', cb);
-  return () => {
-    window.removeEventListener('online', cb);
-    window.removeEventListener('offline', cb);
-  };
-}
-
-function useOnlineStatus() {
-  return useSyncExternalStore(subscribeOnline, () => navigator.onLine, () => true);
-}
+import { useOnlineStatus } from '../../hooks/useOnlineStatus';
 
 interface LayoutProps {
   children: ReactNode;

@@ -1,24 +1,8 @@
-import { useState, useRef, useEffect, useCallback, useSyncExternalStore } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { MessageSquare, Send, Key, PanelLeftClose, X, Maximize2, WifiOff } from 'lucide-react';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { MathWrapper } from './MathWrapper';
-
-function subscribeOnline(cb: () => void) {
-  window.addEventListener('online', cb);
-  window.addEventListener('offline', cb);
-  return () => {
-    window.removeEventListener('online', cb);
-    window.removeEventListener('offline', cb);
-  };
-}
-
-function getOnlineSnapshot() {
-  return navigator.onLine;
-}
-
-function useOnlineStatus() {
-  return useSyncExternalStore(subscribeOnline, getOnlineSnapshot, () => true);
-}
+import { useOnlineStatus } from '../../hooks/useOnlineStatus';
 
 interface Message {
   role: 'user' | 'assistant';
