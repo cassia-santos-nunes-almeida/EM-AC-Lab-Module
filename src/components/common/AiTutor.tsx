@@ -173,6 +173,15 @@ export function AiTutor({ mode, onModeChange }: AiTutorProps) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  useEffect(() => {
+    if (mode !== 'floating') return;
+    const handleEsc = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onModeChange('closed');
+    };
+    document.addEventListener('keydown', handleEsc);
+    return () => document.removeEventListener('keydown', handleEsc);
+  }, [mode, onModeChange]);
+
   const initializeChat = useCallback((key: string) => {
     const genAI = new GoogleGenerativeAI(key);
     const model = genAI.getGenerativeModel({
@@ -321,7 +330,7 @@ export function AiTutor({ mode, onModeChange }: AiTutorProps) {
           You are offline — AI Tutor requires an internet connection.
         </div>
       )}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div aria-live="polite" aria-relevant="additions" className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.map((message, index) => (
           <div
             key={index}
@@ -384,6 +393,8 @@ export function AiTutor({ mode, onModeChange }: AiTutorProps) {
   if (isFloating) {
     return (
       <div
+        role="dialog"
+        aria-label="AI Circuit Tutor"
         className={`fixed z-[100] bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 flex flex-col overflow-hidden`}
         style={{
           width: FLOAT_WIDTH,

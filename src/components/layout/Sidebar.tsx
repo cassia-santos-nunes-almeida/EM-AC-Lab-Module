@@ -98,6 +98,11 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
           </div>
           <div className="w-full h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
             <div
+              role="progressbar"
+              aria-valuenow={visitedCount}
+              aria-valuemin={0}
+              aria-valuemax={totalModules}
+              aria-label={`${visitedCount} of ${totalModules} modules visited`}
               className="h-full bg-green-500 rounded-full transition-all duration-500"
               style={{ width: `${(visitedCount / totalModules) * 100}%` }}
             />
