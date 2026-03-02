@@ -3,12 +3,20 @@ import { MathWrapper } from '../../common/MathWrapper';
 import { CollapsibleSection } from '../../common/CollapsibleSection';
 import { ConceptCheck } from '../../common/ConceptCheck';
 import { ModuleNavigation } from '../../common/ModuleNavigation';
+import { TableOfContents } from '../../common/TableOfContents';
 import { circuitAnalysisFormulas } from '../../../utils/componentMath';
 import { CircuitComparisonLayout } from './CircuitComparisonLayout';
 import { MethodComparisonTable } from './MethodComparisonTable';
 import { ResponseComparisons } from './ResponseComparisons';
 
 import type { CircuitType } from '../../../types/circuit';
+
+const tocEntries = [
+  { id: 'circuit-analysis', label: 'Circuit Analysis' },
+  { id: 'concept-check', label: 'Check Understanding' },
+  { id: 'method-comparison', label: 'Method Comparison' },
+  { id: 'response-types', label: 'Response Types' },
+];
 
 export function TimeDomain() {
   const [selectedCircuit, setSelectedCircuit] = useState<CircuitType>('RC');
@@ -22,7 +30,9 @@ export function TimeDomain() {
         </p>
       </div>
 
-      <div className="flex border-b-2 border-slate-200 dark:border-slate-700">
+      <TableOfContents entries={tocEntries} />
+
+      <div id="circuit-analysis" className="scroll-mt-4 flex border-b-2 border-slate-200 dark:border-slate-700">
         {(['RC', 'RL', 'RLC'] as const).map((type) => (
           <button
             key={type}
@@ -42,6 +52,7 @@ export function TimeDomain() {
       {selectedCircuit === 'RL' && <RLCircuitComparison />}
       {selectedCircuit === 'RLC' && <RLCCircuitComparison />}
 
+      <div id="concept-check" className="scroll-mt-4" />
       {selectedCircuit === 'RC' && (
         <ConceptCheck data={{
           mode: 'predict-reveal',
@@ -64,10 +75,10 @@ export function TimeDomain() {
         }} />
       )}
 
-      <CollapsibleSection title="Method Comparison" defaultOpen={true}>
+      <CollapsibleSection title="Method Comparison" defaultOpen={true} className="scroll-mt-4" id="method-comparison">
         <MethodComparisonTable />
       </CollapsibleSection>
-      <CollapsibleSection title="Circuit Response Types" defaultOpen={false}>
+      <CollapsibleSection title="Circuit Response Types" defaultOpen={false} className="scroll-mt-4" id="response-types">
         <ResponseComparisons />
       </CollapsibleSection>
 
