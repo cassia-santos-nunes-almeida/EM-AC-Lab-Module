@@ -2,6 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { MathWrapper } from '../../common/MathWrapper';
 import { CollapsibleSection } from '../../common/CollapsibleSection';
 import { ConceptCheck } from '../../common/ConceptCheck';
+import { ModuleNavigation } from '../../common/ModuleNavigation';
 import { circuitAnalysisFormulas } from '../../../utils/componentMath';
 import { ArrowRight } from 'lucide-react';
 
@@ -96,6 +97,8 @@ export function TimeDomain() {
       <CollapsibleSection title="Circuit Response Types" defaultOpen={false}>
         <ResponseComparisons />
       </CollapsibleSection>
+
+      <ModuleNavigation />
     </div>
   );
 }

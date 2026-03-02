@@ -8,6 +8,7 @@ import { CircuitParameterSliders } from '../../common/CircuitParameterSliders';
 import { CollapsibleSection } from '../../common/CollapsibleSection';
 import { ChallengeCard } from '../../common/ChallengeCard';
 import { ConceptCheck } from '../../common/ConceptCheck';
+import { ModuleNavigation } from '../../common/ModuleNavigation';
 import { CircuitDiagram } from './CircuitDiagram';
 import { SDomainPanel } from './SDomainPanel';
 import { getChallenges } from './challenges';
@@ -609,6 +610,8 @@ export function InteractiveLab() {
           </li>
         </ul>
       </CollapsibleSection>
+
+      <ModuleNavigation />
     </div>
   );
 }

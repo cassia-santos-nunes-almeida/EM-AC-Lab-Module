@@ -41,6 +41,11 @@ Code quality, UX polish, and student experience — dark mode, responsive layout
 - [x] ComponentPhysics: collapsible material sections
 - [x] ComponentPhysics dark mode fix (61 locations)
 - [x] Sidebar + Overview labels updated
+- [x] LaplaceTheory full dark mode (was missing all dark: variants)
+- [x] LaplaceTheory concept checks (multiple-choice + predict-reveal) and collapsible worked examples
+- [x] ModuleNavigation component (Previous/Next links on all 6 pages)
+- [x] CircuitDiagram SVG dark mode (CSS custom properties for wire/text colors)
+- [x] S-Domain Theory: prominent CTA card linking to Interactive Lab
 
 ## Next
 - Component-level tests (React Testing Library)

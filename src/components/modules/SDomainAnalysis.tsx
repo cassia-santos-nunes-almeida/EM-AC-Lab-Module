@@ -1,8 +1,9 @@
-import { BookOpen, Activity } from 'lucide-react';
+import { BookOpen, Activity, FlaskConical } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { MathWrapper } from '../common/MathWrapper';
 import { ConceptCheck } from '../common/ConceptCheck';
 import { Tabs } from '../common/Tabs';
+import { ModuleNavigation } from '../common/ModuleNavigation';
 
 function TheoryTab() {
   return (
@@ -80,15 +81,21 @@ function TheoryTab() {
         ],
       }} />
 
-      <div className="bg-engineering-blue-50 dark:bg-engineering-blue-900/20 rounded-lg p-4 border border-engineering-blue-200 dark:border-engineering-blue-800">
-        <p className="text-sm text-slate-700 dark:text-slate-300">
-          Explore these concepts interactively — compute transfer functions, visualize poles on the s-plane,
-          and see how parameters affect stability in the{' '}
-          <Link to="/interactive-lab" className="text-engineering-blue-600 dark:text-engineering-blue-400 font-semibold hover:underline">
-            Interactive Lab
-          </Link>.
-        </p>
-      </div>
+      <Link
+        to="/interactive-lab"
+        className="flex items-center gap-4 p-5 rounded-lg bg-gradient-to-r from-engineering-blue-50 to-indigo-50 dark:from-engineering-blue-900/20 dark:to-indigo-900/20 border border-engineering-blue-200 dark:border-engineering-blue-800 hover:shadow-md transition-all hover:-translate-y-0.5 group"
+      >
+        <div className="w-10 h-10 rounded-xl bg-engineering-blue-100 dark:bg-engineering-blue-900/50 flex items-center justify-center shrink-0">
+          <FlaskConical className="w-5 h-5 text-engineering-blue-600 dark:text-engineering-blue-400" />
+        </div>
+        <div className="flex-1">
+          <p className="font-semibold text-engineering-blue-900 dark:text-engineering-blue-200 text-sm">Try it in the Interactive Lab</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+            Compute transfer functions, visualize poles on the s-plane, and see how R, L, C affect stability — all in real time.
+          </p>
+        </div>
+        <Activity className="w-4 h-4 text-engineering-blue-400 dark:text-engineering-blue-500 group-hover:text-engineering-blue-600 dark:group-hover:text-engineering-blue-300 transition-colors shrink-0" />
+      </Link>
     </div>
   );
 }
@@ -216,6 +223,8 @@ export function SDomainAnalysis() {
           },
         ]}
       />
+
+      <ModuleNavigation />
     </div>
   );
 }

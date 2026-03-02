@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from 'react';
 import { MathWrapper } from '../../common/MathWrapper';
 import { CollapsibleSection } from '../../common/CollapsibleSection';
+import { ModuleNavigation } from '../../common/ModuleNavigation';
 import {
   resistanceFormula,
   capacitanceFormula,
@@ -99,6 +100,8 @@ export function ComponentPhysics() {
           onPermeabilityChange={setInductorPermeability}
         />
       )}
+
+      <ModuleNavigation />
     </div>
   );
 }
