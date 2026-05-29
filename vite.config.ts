@@ -5,7 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa'
 import path from 'path'
 
 // https://vite.dev/config/
-const base = process.env.GITHUB_ACTIONS ? '/EM-AC-Lab-Module/' : '/'
+const base = process.env.GITHUB_ACTIONS ? '/EM-AC-Lab-Module2/' : '/'
 
 export default defineConfig({
   base,

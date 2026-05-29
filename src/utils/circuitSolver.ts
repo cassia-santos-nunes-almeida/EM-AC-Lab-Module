@@ -129,16 +129,19 @@ function calculateRLCUnified(
     const s2 = -alpha - sqrtTerm;
 
     if (inputType === 'step') {
-      const A1 = (Vs * s2) / (s2 - s1);
-      const A2 = (-Vs * s1) / (s2 - s1);
+      // Overdamped step (charge) response of v_C: forced term Vs plus the two
+      // natural modes, fixed by v(0)=0 and dv/dt(0)=i(0)/C=0. The earlier form
+      // omitted the forced Vs term, so it produced an inverted discharge curve
+      // (v(0)=Vs, v(inf)=0). Now v(0)=0, v(inf)=Vs, i(0)=0. Note s1*s2 = omega0^2.
+      const invDiff = 1 / (s1 - s2);
       for (let i = 0; i < times.length; i++) {
         const t = times[i];
         const exp1 = Math.exp(s1 * t);
         const exp2 = Math.exp(s2 * t);
         data[i] = {
           time: t,
-          voltage: A1 * exp1 + A2 * exp2,
-          current: C * (A1 * s1 * exp1 + A2 * s2 * exp2),
+          voltage: Vs * (1 + (s2 * exp1 - s1 * exp2) * invDiff),
+          current: C * Vs * s1 * s2 * (exp1 - exp2) * invDiff,
         };
       }
     } else {
