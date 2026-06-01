@@ -3,6 +3,7 @@ import { MathWrapper } from '@/components/common/MathWrapper';
 import { CollapsibleSection } from '@/components/common/CollapsibleSection';
 import { ConceptCheck } from '@/components/common/ConceptCheck';
 import { ModuleNavigation } from '@/components/common/ModuleNavigation';
+import { GuidedChallenge } from '@/components/common/GuidedChallenge';
 import { TableOfContents } from '@/components/common/TableOfContents';
 import { circuitAnalysisFormulas } from '@/utils/componentMath';
 import { CircuitComparisonLayout } from './CircuitComparisonLayout';
@@ -22,6 +23,20 @@ const tocEntries = [
   { id: 'method-comparison', label: 'Method Comparison' },
   { id: 'response-types', label: 'Response Types' },
 ];
+
+const CHALLENGE = {
+  title: `Compare Circuit Types Across Time-Domain and S-Domain`,
+  description: `A guided exploration of the "Circuit Analysis" section. Using the RC / RL / RLC circuit-type selector tabs, the student steps through the three circuits, comparing how the same physics is solved with a differential equation in the Time-Domain panel versus an algebraic transform in the S-Domain panel, and predicts how parameter changes move the s-plane poles.`,
+  instructions: [
+    `Select the 'RC Circuit' tab. In the Time-Domain Approach panel, follow Steps 1-3 and note that KVL plus the capacitor law i = C dv_C/dt gives a first-order ODE with time constant τ = RC; confirm the solution v_C(t) = V_s(1 - e^{-t/τ}) rises toward V_s.`,
+    `Still on RC, read the S-Domain Approach panel: see the capacitor become impedance Z_C = 1/(sC) and the ODE turn into the algebra I(s) = (V_s/R)·1/(s + 1/RC). Note that the inverse transform reproduces the identical i(t) and v_C(t) — confirm the green Conclusion box says both methods agree.`,
+    `Open the RC 'Your Turn' panel and predict the effect of doubling R before revealing: check that τ doubles and the pole at s = -1/τ moves toward the origin (slower decay), reading the Correct Reveal that the pole shifts from -1000 to -500 rad/s.`,
+    `Switch to the 'RL Circuit' tab and compare its time constant to the RC case: observe τ = L/R, so in the RL 'Your Turn' panel doubling R now halves τ and pushes the pole at s = -R/L further from the origin — the opposite direction to the RC circuit you just saw.`,
+    `Switch to the 'RLC Circuit' tab and compare the two panels: note the Time-Domain side splits into overdamped / critically damped / underdamped cases, while the S-Domain side gets there in one characteristic equation s² + (R/L)s + 1/LC = 0 with poles s = -α ± √(α² - ω₀²); use the 'Your Turn' panel to confirm that halving C raises ω₀ by √2 and lowers ζ by √2.`,
+    `Conclude in your own words: as circuit order rises from first-order (RC, RL) to second-order (RLC), explain why the s-domain (algebraic poles) scales far better than repeatedly solving differential equations, and relate pole position in the s-plane to response speed and damping.`,
+  ],
+  hint: `Whichever tab you pick, read the two panels as the same problem twice — the s-domain pole location (s = -1/τ for RC, s = -R/L for RL, the roots of s² + (R/L)s + 1/LC for RLC) tells you the decay rate and damping that the time-domain exponential is hiding.`,
+};
 
 export function TimeDomain() {
   const markVisited = useProgressStore((s) => s.markVisited);
@@ -121,6 +136,8 @@ export function TimeDomain() {
           onHint={() => incrementHints('circuit-analysis')}
         />
       </section>
+
+      <GuidedChallenge challenge={CHALLENGE} />
 
       <ModuleNavigation />
     </div>

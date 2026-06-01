@@ -142,6 +142,34 @@ describe('calculateCircuitResponse — RLC', () => {
     expect(maxVoltage).toBeLessThanOrEqual(params.voltage + TOL);
   });
 
+  it('overdamped step response charges from 0 up to Vs (regression: was inverted)', () => {
+    // Default lab parameters land here (R=100 -> zeta~1.58), so this is the curve
+    // students see on first load. The earlier solver omitted the forced Vs term and
+    // produced a discharge curve (v(0)=Vs, v(inf)=0). The "never exceeds Vs" test
+    // above passes on that wrong curve too, so pin both endpoints and i(0).
+    const params = { R: 100, L: 0.1, C: 0.0001, voltage: 5 };
+    const result = calculateCircuitResponse('RLC', params, 0.0001, 0.1);
+    const first = result.data[0];
+    const last = result.data[result.data.length - 1];
+
+    expect(result.dampingType).toBe('overdamped');
+    expect(first.voltage).toBeCloseTo(0, 6); // v(0) = 0, not Vs
+    expect(last.voltage).toBeCloseTo(params.voltage, 1); // rises to Vs
+    expect(first.current).toBeCloseTo(0, 6); // i(0) = 0 for a step into an overdamped RLC
+
+    // Overdamped has no overshoot: voltage is monotonically non-decreasing.
+    const monotonic = result.data.every((p, i) =>
+      i === 0 || p.voltage >= result.data[i - 1].voltage - TOL);
+    expect(monotonic).toBe(true);
+  });
+
+  it('overdamped step rises to Vs at high R too (R=1000)', () => {
+    const params = { R: 1000, L: 0.1, C: 0.0001, voltage: 5 };
+    const result = calculateCircuitResponse('RLC', params, 0.0001, 0.5);
+    expect(result.data[0].voltage).toBeCloseTo(0, 6);
+    expect(result.data[result.data.length - 1].voltage).toBeCloseTo(params.voltage, 1);
+  });
+
   it('impulse response starts near 0 and returns to 0', () => {
     const params = { R: 10, L: 0.1, C: 0.0001, voltage: 5 };
     // Longer duration so the underdamped oscillation decays fully
